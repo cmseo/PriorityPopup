@@ -1,9 +1,11 @@
 package com.example.prioritybasedpopup
 
 import android.app.AlertDialog
+import android.app.Dialog
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.compose.setContent
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
@@ -16,13 +18,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.lifecycleScope
 import com.example.prioritybasedpopup.ui.theme.PriorityBasedPopupTheme
-import com.example.prioritybasedpopup.ui.theme.aitsuki.DialogQueue
 import com.example.prioritybasedpopup.ui.theme.popup.ItemListDialogFragment
+import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 
 class MainActivity : AppCompatActivity() {
-    private val queue = DialogQueue(this, supportFragmentManager)
-
+    private val priorityPopupViewModel : PriorityPopupViewModel by viewModels()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
@@ -33,19 +35,19 @@ class MainActivity : AppCompatActivity() {
                         Text(
                             modifier = Modifier.padding(30.dp)
                                 .clickable {
-                                    queue.offer("foo", 1) { next ->
+                                    priorityPopupViewModel.offer("foo", 1) { next ->
                                             AlertDialog.Builder(this@MainActivity)
                                             .setMessage("priority 1!")
                                             .setOnDismissListener { next() }
                                             .create()
                                     }
-                                    queue.offer("boo", 2) { next ->
+                                    priorityPopupViewModel.offer("boo", 2) { next ->
                                         AlertDialog.Builder(this@MainActivity)
                                             .setMessage("priority 2!")
                                             .setOnDismissListener { next() }
                                             .create()
                                     }
-                                    queue.offer("bar", 3) { next ->
+                                    priorityPopupViewModel.offer("bar", 3) { next ->
                                         AlertDialog.Builder(this@MainActivity)
                                             .setMessage("priority 3!")
                                             .setOnDismissListener { next() }
@@ -60,16 +62,16 @@ class MainActivity : AppCompatActivity() {
                             modifier = Modifier.padding(30.dp)
                                 .clickable {
 
-                                    queue.offer("bardds", 2) { next ->
+                                    priorityPopupViewModel.offer("bardds", 2) { next ->
                                         ItemListDialogFragment.newInstance(next, 2)
                                     }
 
-                                    queue.offer("bardd", 3) { next ->
+                                    priorityPopupViewModel.offer("bardd", 3) { next ->
                                         ItemListDialogFragment.newInstance(next,3)
                                     }
 
 
-                                    queue.offer("dsbardd", 4) { next ->
+                                    priorityPopupViewModel.offer("dsbardd", 4) { next ->
                                         ItemListDialogFragment.newInstance(next, 4)
                                     }
                                 },
@@ -81,7 +83,7 @@ class MainActivity : AppCompatActivity() {
                 }
             }
         }
-        queue.offer("bar", 2) { next ->
+        priorityPopupViewModel.offer("bar", 2) { next ->
             AlertDialog.Builder(this@MainActivity)
                 .setMessage("priority 2!")
                 .setOnDismissListener {                     Log.d("MainLog", "dialog AlertDialog")
@@ -89,7 +91,7 @@ class MainActivity : AppCompatActivity() {
                 .create()
         }
 
-        queue.offer("foo", 3) { next ->
+        priorityPopupViewModel.offer("foo", 3) { next ->
             AlertDialog.Builder(this@MainActivity)
                 .setMessage("priority 3!")
                 .setOnDismissListener {
@@ -99,7 +101,7 @@ class MainActivity : AppCompatActivity() {
                 .create()
         }
 
-        queue.offer("boo", 4) { next ->
+        priorityPopupViewModel.offer("boo", 4) { next ->
             AlertDialog.Builder(this@MainActivity)
                 .setMessage("priority 4!")
                 .setOnDismissListener {
@@ -109,8 +111,17 @@ class MainActivity : AppCompatActivity() {
                 .create()
         }
 
-        queue.offer("dsbardd", 5) { next ->
+        priorityPopupViewModel.offer("dsbardd", 5) { next ->
             ItemListDialogFragment.newInstance(next, 5)
+        }
+
+        lifecycleScope.launchWhenResumed {
+            priorityPopupViewModel.popupState.collect {
+                when (it) {
+                    is Dialog -> it.show()
+                    is BottomSheetDialogFragment -> it.show(supportFragmentManager, "")
+                }
+            }
         }
     }
 }
