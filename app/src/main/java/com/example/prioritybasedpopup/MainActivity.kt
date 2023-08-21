@@ -25,6 +25,7 @@ import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 
 class MainActivity : AppCompatActivity() {
     private val priorityPopupViewModel : PriorityPopupViewModel by viewModels()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
@@ -63,16 +64,16 @@ class MainActivity : AppCompatActivity() {
                                 .clickable {
 
                                     priorityPopupViewModel.offer("bardds", 2) { next ->
-                                        ItemListDialogFragment.newInstance(next, 2)
+                                        ItemListDialogFragment.newInstance(2)
                                     }
 
                                     priorityPopupViewModel.offer("bardd", 3) { next ->
-                                        ItemListDialogFragment.newInstance(next,3)
+                                        ItemListDialogFragment.newInstance(3)
                                     }
 
 
                                     priorityPopupViewModel.offer("dsbardd", 4) { next ->
-                                        ItemListDialogFragment.newInstance(next, 4)
+                                        ItemListDialogFragment.newInstance(4)
                                     }
                                 },
                             text = "show bottom Sheet"
@@ -112,7 +113,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         priorityPopupViewModel.offer("dsbardd", 5) { next ->
-            ItemListDialogFragment.newInstance(next, 5)
+            ItemListDialogFragment.newInstance(5)
         }
 
         lifecycleScope.launchWhenResumed {
@@ -124,6 +125,8 @@ class MainActivity : AppCompatActivity() {
             }
         }
     }
+
+    fun takeNext() = priorityPopupViewModel.next()
 }
 
 @Composable

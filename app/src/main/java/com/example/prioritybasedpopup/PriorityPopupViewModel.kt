@@ -28,20 +28,20 @@ class PriorityPopupViewModel : ViewModel() {
                 val task = pq.peek()?.also {
                     Log.d("PriorityBasedPopupTask", "peek: $it")
                 } ?: return@consumeEach
-                val nextFunc = fun () {
+                try {
+                    _popupState.value = task.dialogBuilder(next())
+                    next.receive() // 작업 목록 대기
+
                     _popupState.value = null
                     pq.remove(task)
-                    next.trySend(Unit) // 작업 목록 재개
-                }
-                try {
-                    _popupState.value = task.dialogBuilder(nextFunc)
-                    next.receive() // 작업 목록 대기
                 } catch (e: Throwable) {
                     e.printStackTrace()
                 }
             }
         }
     }
+
+    fun next() = fun () { next.trySend(Unit) }
 
     override fun onCleared() {
         super.onCleared()

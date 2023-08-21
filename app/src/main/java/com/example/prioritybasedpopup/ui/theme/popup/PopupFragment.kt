@@ -7,6 +7,7 @@ import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import com.example.prioritybasedpopup.MainActivity
 import com.example.prioritybasedpopup.databinding.FragmentItemListDialogListDialogBinding
 
 // TODO: Customize parameter argument names
@@ -22,7 +23,6 @@ const val ARG_ITEM_COUNT = "item_count"
  * </pre>
  */
 class ItemListDialogFragment(
-    private val next: () -> Unit,
     private val priority: Int
 ) : BottomSheetDialogFragment() {
 
@@ -45,7 +45,7 @@ class ItemListDialogFragment(
     override fun onDismiss(dialog: DialogInterface) {
         super.onDismiss(dialog)
         Log.d("ItemListDialogFragment", "dialog onDismiss")
-        next()
+        (activity as? MainActivity)?.takeNext()?.invoke()
     }
 
 
@@ -55,6 +55,6 @@ class ItemListDialogFragment(
     }
 
     companion object {
-        fun newInstance(next: () -> Unit, priority: Int): ItemListDialogFragment = ItemListDialogFragment(next, priority)
+        fun newInstance(priority: Int): ItemListDialogFragment = ItemListDialogFragment(priority)
     }
 }
