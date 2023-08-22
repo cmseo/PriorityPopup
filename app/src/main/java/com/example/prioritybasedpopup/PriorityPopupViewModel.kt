@@ -29,9 +29,9 @@ class PriorityPopupViewModel : ViewModel() {
                     Log.d("PriorityBasedPopupTask", "peek: $it")
                 } ?: return@consumeEach
                 try {
-                    _popupState.value = task.dialogBuilder(next())
-                    next.receive() // 작업 목록 대기
+                    _popupState.value = task.dialogBuilder() // 팝업 발생
 
+                    next.receive() // 작업 목록 대기
                     _popupState.value = null
                     pq.remove(task)
                 } catch (e: Throwable) {
@@ -41,7 +41,10 @@ class PriorityPopupViewModel : ViewModel() {
         }
     }
 
-    fun next() = fun () { next.trySend(Unit) }
+    fun next() = fun () {
+        Log.d("PriorityBasedPopupTask", "next invoked")
+        next.trySend(Unit)
+    }
 
     override fun onCleared() {
         super.onCleared()
@@ -55,7 +58,7 @@ class PriorityPopupViewModel : ViewModel() {
         _popupState.value = null
     }
 
-    fun offer(tag: String, priority: Int, dialogBuilder: (next: () -> Unit) -> Any) {
+    fun offer(tag: String, priority: Int, dialogBuilder: () -> Any) {
         val task = PriorityBasedPopupTask(tag, priority, dialogBuilder)
         if (pq.contains(task)) {
             return
@@ -72,5 +75,5 @@ class PriorityPopupViewModel : ViewModel() {
 data class PriorityBasedPopupTask(
     val tag: String,
     val priority: Int,
-    val dialogBuilder: (next: () -> Unit) -> Any
+    val dialogBuilder: () -> Any
 )

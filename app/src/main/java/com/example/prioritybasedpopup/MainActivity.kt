@@ -36,22 +36,22 @@ class MainActivity : AppCompatActivity() {
                         Text(
                             modifier = Modifier.padding(30.dp)
                                 .clickable {
-                                    priorityPopupViewModel.offer("foo", 1) { next ->
+                                    priorityPopupViewModel.offer("foo", 1) { 
                                             AlertDialog.Builder(this@MainActivity)
                                             .setMessage("priority 1!")
-                                            .setOnDismissListener { next() }
+                                            .setOnDismissListener { takeNext() }
                                             .create()
                                     }
-                                    priorityPopupViewModel.offer("boo", 2) { next ->
+                                    priorityPopupViewModel.offer("boo", 2) {
                                         AlertDialog.Builder(this@MainActivity)
                                             .setMessage("priority 2!")
-                                            .setOnDismissListener { next() }
+                                            .setOnDismissListener { takeNext() }
                                             .create()
                                     }
-                                    priorityPopupViewModel.offer("bar", 3) { next ->
+                                    priorityPopupViewModel.offer("bar", 3) {
                                         AlertDialog.Builder(this@MainActivity)
                                             .setMessage("priority 3!")
-                                            .setOnDismissListener { next() }
+                                            .setOnDismissListener { takeNext() }
                                             .create()
                                     }
 
@@ -62,17 +62,16 @@ class MainActivity : AppCompatActivity() {
                         Text(
                             modifier = Modifier.padding(30.dp)
                                 .clickable {
-
-                                    priorityPopupViewModel.offer("bardds", 2) { next ->
+                                    priorityPopupViewModel.offer("bardds", 2) {
                                         ItemListDialogFragment.newInstance(2)
                                     }
 
-                                    priorityPopupViewModel.offer("bardd", 3) { next ->
+                                    priorityPopupViewModel.offer("bardd", 3) {
                                         ItemListDialogFragment.newInstance(3)
                                     }
 
 
-                                    priorityPopupViewModel.offer("dsbardd", 4) { next ->
+                                    priorityPopupViewModel.offer("dsbardd", 4) {
                                         ItemListDialogFragment.newInstance(4)
                                     }
                                 },
@@ -84,35 +83,37 @@ class MainActivity : AppCompatActivity() {
                 }
             }
         }
-        priorityPopupViewModel.offer("bar", 2) { next ->
+        priorityPopupViewModel.offer("bar", 2) {
             AlertDialog.Builder(this@MainActivity)
                 .setMessage("priority 2!")
-                .setOnDismissListener {                     Log.d("MainLog", "dialog AlertDialog")
-                    next() }
+                .setOnDismissListener {
+                    Log.d("MainLog", "dialog AlertDialog")
+                    takeNext()
+                }
                 .create()
         }
 
-        priorityPopupViewModel.offer("foo", 3) { next ->
+        priorityPopupViewModel.offer("foo", 3) {
             AlertDialog.Builder(this@MainActivity)
                 .setMessage("priority 3!")
                 .setOnDismissListener {
                     Log.d("MainLog", "dialog AlertDialog")
 
-                    next() }
+                    takeNext() }
                 .create()
         }
 
-        priorityPopupViewModel.offer("boo", 4) { next ->
+        priorityPopupViewModel.offer("boo", 4) {
             AlertDialog.Builder(this@MainActivity)
                 .setMessage("priority 4!")
                 .setOnDismissListener {
                     Log.d("MainLog", "dialog AlertDialog")
 
-                    next() }
+                    takeNext() }
                 .create()
         }
 
-        priorityPopupViewModel.offer("dsbardd", 5) { next ->
+        priorityPopupViewModel.offer("dsbardd", 5) {
             ItemListDialogFragment.newInstance(5)
         }
 
@@ -126,7 +127,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    fun takeNext() = priorityPopupViewModel.next()
+    fun takeNext() = priorityPopupViewModel.next().invoke()
 }
 
 @Composable

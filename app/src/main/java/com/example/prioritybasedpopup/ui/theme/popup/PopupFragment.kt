@@ -45,7 +45,7 @@ class ItemListDialogFragment(
     override fun onDismiss(dialog: DialogInterface) {
         super.onDismiss(dialog)
         Log.d("ItemListDialogFragment", "dialog onDismiss")
-        (activity as? MainActivity)?.takeNext()?.invoke()
+        (activity as? MainActivity)?.takeNext()
     }
 
 
